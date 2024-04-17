@@ -1,10 +1,12 @@
 import { HttpStatus, HttpException, Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './entities/item.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Listing } from './entities/listing.entity';
+import { Comment } from './entities/comment.entity';
 
 @Injectable()
 export class ItemsService {
@@ -15,27 +17,45 @@ export class ItemsService {
   ) {} // EntityManager exposes the methods to interact with the database
 
   async create(createItemDto: CreateItemDto) {
-    const item = new Item(createItemDto);
+    const listing = new Listing({
+      ...createItemDto.listing,
+      rating: 0
+    })
+    const item = new Item({
+      ...createItemDto,
+      comments: [],
+      listing
+    });
 
     await this.entityManager.save(item);
   }
 
   findAll() {
-    return this.itemRepository.find()
+    return this.itemRepository.find({
+      relations: { listing: true, comments: true }
+    })
   }
 
   async findOne(id: number) {
-    const item = await this.itemRepository.findOneBy({ id });
+    const item = await this.itemRepository.findOne({
+      where: { id },
+      relations: { listing: true, comments: true }
+    });
     return item;
   }
 
   async update(id: number, updateItemDto: UpdateItemDto) {
     try {
-      await this.itemRepository.update(id, updateItemDto)
-      return 'Data Updated'
+      const item = await this.itemRepository.findOneBy({ id })
+      const comments = updateItemDto.comments.map(createCommentDto => new Comment(createCommentDto))
+      item.comments = comments
+      await this.entityManager.save(item)
+      return {
+        statusCode: HttpStatus.OK,
+        message: "Data Updated",
+      }
     } catch (err) {
-      console.log('Error', err)
-      throw new HttpException('Error Occured', HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(err.message, HttpStatus.AMBIGUOUS)
     }
   }
 
