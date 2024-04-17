@@ -3,24 +3,27 @@ version: '3.8'
 services:
   nest-backend:
     container_name: nest-app
-    image: nest-api
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 3001:3001
+      - 3000:3000
+    env_file:
+      - .env
     volumes:
-      - '.:/usr/src/app'
-      - api_node_modules:/usr/src/app/node_modules
+      - ".:/usr/src/app"
+      - "api_node_modules:/usr/src/app/node_modules"
     restart: unless-stopped
     
   dev-db:
     container_name: dev-db
     image: postgres:13
-    env_file:
-      - .env
     ports:
-      - "5434:5432"
+      - ${DATABASE_PORT}:5432
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
       - devDb:/var/lib/postgresql/data
 
