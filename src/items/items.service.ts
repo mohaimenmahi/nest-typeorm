@@ -7,6 +7,7 @@ import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './entities/item.entity';
 import { Listing } from './entities/listing.entity';
 import { Comment } from './entities/comment.entity';
+import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class ItemsService {
@@ -21,9 +22,11 @@ export class ItemsService {
       ...createItemDto.listing,
       rating: 0
     })
+    const tags = createItemDto.tags.map(createTagDto => new Tag(createTagDto))
     const item = new Item({
       ...createItemDto,
       comments: [],
+      tags,
       listing
     });
 
