@@ -18,24 +18,28 @@ export class ItemsService {
   ) {} // EntityManager exposes the methods to interact with the database
 
   async create(createItemDto: CreateItemDto) {
-    const listing = new Listing({
-      ...createItemDto.listing,
-      rating: 0
-    })
-    const tags = createItemDto.tags.map(createTagDto => new Tag(createTagDto))
-    const item = new Item({
-      ...createItemDto,
-      comments: [],
-      tags,
-      listing
-    });
-
-    await this.entityManager.save(item);
+    try {
+      const listing = new Listing({
+        ...createItemDto.listing,
+        rating: 0
+      })
+      const tags = createItemDto.tags.map(createTagDto => new Tag(createTagDto))
+  
+      const item = new Item({
+        ...createItemDto,
+        tags,
+        listing
+      });
+  
+      await this.entityManager.save(item);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+    }
   }
 
   findAll() {
     return this.itemRepository.find({
-      relations: { listing: true, comments: true }
+      relations: { listing: true, comments: true, tags: true }
     })
   }
 
@@ -49,10 +53,27 @@ export class ItemsService {
 
   async update(id: number, updateItemDto: UpdateItemDto) {
     try {
-      const item = await this.itemRepository.findOneBy({ id })
-      const comments = updateItemDto.comments.map(createCommentDto => new Comment(createCommentDto))
-      item.comments = comments
-      await this.entityManager.save(item)
+      // const item = await this.itemRepository.findOneBy({ id })
+      // const comments = updateItemDto.comments.map(createCommentDto => new Comment(createCommentDto))
+      // item.comments = comments
+      // await this.entityManager.save(item)
+      // return {
+      //   statusCode: HttpStatus.OK,
+      //   message: "Data Updated",
+      // }
+
+      await this.entityManager.transaction(async transactionEM => { // EM stands for entity manager
+        const item = await this.itemRepository.findOneBy({ id })
+        const comments = updateItemDto.comments.map(createCommentDto => new Comment(createCommentDto))
+        item.comments = comments
+        await transactionEM.save(item)
+
+        const tagContent = `${Math.random()}`
+        const tag = new Tag({ content: tagContent })
+
+        await transactionEM.save(tag)
+      })
+
       return {
         statusCode: HttpStatus.OK,
         message: "Data Updated",
