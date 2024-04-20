@@ -709,9 +709,9 @@
     webpack "5.90.1"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^10.3.7":
+"@nestjs/common@10.3.7":
   version "10.3.7"
-  resolved "https://registry.npmjs.org/@nestjs/common/-/common-10.3.7.tgz"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.3.7.tgz#38ab5ff92277cf1f26f4749c264524e76962cfff"
   integrity sha512-gKFtFzcJznrwsRYjtNZoPAvSOPYdNgxbTYoAyLTpoy393cIKgLmJTHu6ReH8/qIB9AaZLdGaFLkx98W/tFWFUw==
   dependencies:
     uid "2.0.2"
@@ -4953,7 +4953,7 @@ typedarray@^0.0.6:
 
 typeorm@^0.3.20:
   version "0.3.20"
-  resolved "https://registry.npmjs.org/typeorm/-/typeorm-0.3.20.tgz"
+  resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.3.20.tgz#4b61d737c6fed4e9f63006f88d58a5e54816b7ab"
   integrity sha512-sJ0T08dV5eoZroaq9uPKBoNcGslHBR4E4y+EBHs//SiGbblGe7IeduP/IH4ddCcj0qp3PHwDwGnuvqEAnKlq/Q==
   dependencies:
     "@sqltools/formatter" "^1.2.5"
@@ -5171,6 +5171,7 @@ which@^2.0.1:
     isexe "^2.0.0"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
